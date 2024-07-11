@@ -30,7 +30,7 @@ export default function Home() {
   const onSubmit = (data: { verbType: VerbType; verbForm: VerbFormType }) => {
     localStorage.setItem("verbType", data.verbType);
     localStorage.setItem("verbForm", data.verbForm);
-    router.push("/verbs");
+    router.push("/play");
   };
 
   return (

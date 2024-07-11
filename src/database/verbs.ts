@@ -12,6 +12,10 @@ export const getVerbList = (verbType: VerbType) => {
   switch (verbType) {
     case "Godan":
       return godanVerbs;
+    case "Ichidan":
+      return ichidanVerbs;
+    case "Irregular":
+      return irregularVerbs;
     default:
       return [];
   }
@@ -47,4 +51,11 @@ const godanVerbs: Verb[] = [
   { kanji: "貸す", reading: "かす", meaning: "To lend" },
   { kanji: "被る", reading: "かぶる", meaning: "To put on (a hat)" },
   { kanji: "聞く", reading: "きく", meaning: "To listen, to hear" },
+];
+
+const ichidanVerbs: Verb[] = [];
+
+const irregularVerbs: Verb[] = [
+  { kanji: "来る", reading: "くる", meaning: "To come" },
+  { kanji: "する", reading: "する", meaning: "To do" },
 ];

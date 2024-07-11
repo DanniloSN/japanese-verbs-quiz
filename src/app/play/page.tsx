@@ -4,13 +4,15 @@ import Delimiter from "@/components/delimiter";
 import Form from "@/components/form";
 import Input from "@/components/input";
 import { getVerbList, Verb } from "@/database/verbs";
-import { getFormatter } from "@/formatters/godan";
+import * as GodanFormatter from "@/formatters/godan";
+import * as IchidanFormatter from "@/formatters/ichindan";
+import * as IrregularFormatter from "@/formatters/irregular";
 import { FormEvent, useEffect, useState } from "react";
 import { VerbFormType, VerbType } from "../page";
 import { useRouter } from "next/navigation";
 import Button from "@/components/button";
 
-export default function VerbsPage() {
+export default function PlayPage() {
   const [verbList, setVerbList] = useState<Verb[]>([]);
   const [formatMethod, setFormatMethod] = useState<Function>((_: string) => {});
   const [actualVerb, setActualVerb] = useState<Verb>({} as Verb);
@@ -24,10 +26,20 @@ export default function VerbsPage() {
     if (!verbType || !verbForm) {
       return;
     }
-    if (verbType === "Godan") {
-      setVerbList([...getVerbList(verbType)]);
+    setVerbList([...getVerbList(verbType)]);
+    switch (verbType) {
+      case "Godan":
+        setFormatMethod((_) => GodanFormatter.getFormatter);
+        break;
+      case "Ichidan":
+        setFormatMethod((_) => IchidanFormatter.getFormatter);
+        break;
+      case "Irregular":
+        setFormatMethod((_) => IrregularFormatter.getFormatter);
+        break;
+      default:
+        break;
     }
-    setFormatMethod((_) => getFormatter(verbForm));
   }, [verbType, verbForm]);
 
   useEffect(() => {
@@ -35,7 +47,7 @@ export default function VerbsPage() {
       return;
     }
     generateNewRandomVerb();
-  }, [verbList]);
+  });
 
   const randomNumber = (toNumber: number) => {
     return Math.floor(Math.random() * toNumber);
@@ -57,9 +69,7 @@ export default function VerbsPage() {
     { response }: { response: string },
     event: FormEvent<HTMLFormElement> | undefined
   ) => {
-    if (!actualVerb?.answers?.includes(response)) {
-      setAnswered([...answered, { ...actualVerb, answered: response }]);
-    }
+    setAnswered([...answered, { ...actualVerb, answered: response }]);
     event?.currentTarget.reset();
     if (!verbList.length) {
       return finish();

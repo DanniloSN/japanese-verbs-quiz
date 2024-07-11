@@ -68,18 +68,14 @@ export default function VerbsPage() {
   };
 
   const finish = () => {
-    const errors = answered.filter(
-      (verb) => !verb.answers?.includes(verb.answered || "")
-    );
-    const fullList = getVerbList(verbType);
-    alert(`${fullList.length - errors.length}/${fullList.length}`);
-    router.replace("/");
+    localStorage.setItem("lastResults", JSON.stringify(answered));
+    router.replace("/last-results");
   };
 
   return (
     <main>
       <Delimiter className="p-3">
-        <h1>Verbs Conjulgation Quiz</h1>
+        <h1 className="text-center">Verbs Conjulgation Quiz</h1>
         <br />
         <p>
           Write the <b>{verbForm}</b> Form of {actualVerb?.kanji} (

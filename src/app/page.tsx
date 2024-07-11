@@ -38,29 +38,34 @@ export default function Home() {
       <Delimiter className="p-3">
         <h1 className="text-center">Verbs</h1>
         <br />
-        <div className="flex gap-2">
-          <Select className="flex-1" name="verbType">
-            {verbTypes.map((type) => {
-              return (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              );
-            })}
-          </Select>
-          <Select className="flex-1" name="verbForm">
-            {verbForms.map((form) => {
-              return (
-                <option key={form} value={form}>
-                  {form}
-                </option>
-              );
-            })}
-          </Select>
-        </div>
+        <Select name="verbType">
+          {verbTypes.map((type) => {
+            return (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            );
+          })}
+        </Select>
+        <Select className="mt-2" name="verbForm">
+          {verbForms.map((form) => {
+            return (
+              <option key={form} value={form}>
+                {form}
+              </option>
+            );
+          })}
+        </Select>
       </Delimiter>
       <Delimiter fixed>
         <Button>Start</Button>
+        <Button
+          className="mt-2"
+          onClick={() => router.push("last-results")}
+          type="button"
+        >
+          Last Results
+        </Button>
       </Delimiter>
     </Form>
   );

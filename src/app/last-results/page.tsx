@@ -4,13 +4,17 @@ import Button from "@/components/button";
 import Delimiter from "@/components/delimiter";
 import { Verb } from "@/database/verbs";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function LastResultsPage() {
+  const [lastResults, setLastResults] = useState<Verb[]>([]);
   const router = useRouter();
 
-  const lastResults = JSON.parse(
-    localStorage.getItem("lastResults") ?? "[]"
-  ) as Verb[];
+  useEffect(() => {
+    setLastResults(
+      JSON.parse(localStorage.getItem("lastResults") ?? "[]") as Verb[]
+    );
+  }, []);
 
   return (
     <main>

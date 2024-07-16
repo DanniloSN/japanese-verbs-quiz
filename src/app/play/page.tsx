@@ -7,58 +7,48 @@ import { getVerbList, Verb } from "@/database/verbs";
 import * as GodanFormatter from "@/formatters/godan";
 import * as IchidanFormatter from "@/formatters/ichindan";
 import * as IrregularFormatter from "@/formatters/irregular";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { VerbFormType, VerbType } from "../page";
 import { useRouter } from "next/navigation";
 import Button from "@/components/button";
 
 export default function PlayPage() {
   const [verbList, setVerbList] = useState<Verb[]>([]);
-  const [formatMethod, setFormatMethod] = useState<Function>((_: string) => {});
   const [actualVerb, setActualVerb] = useState<Verb>({} as Verb);
-  const [answered, setAnswered] = useState<Verb[]>([]);
+  const formatMethod = useRef<Function>(() => {});
+  const answered = useRef<Verb[]>([]);
   const router = useRouter();
 
-  const verbType = localStorage.getItem("verbType") as VerbType;
-  const verbForm = localStorage.getItem("verbForm") as VerbFormType;
+  const [verbType, setVerbType] = useState<VerbType>();
+  const [verbForm, setVerbForm] = useState<VerbFormType>();
 
   useEffect(() => {
-    if (!verbType || !verbForm) {
-      return;
-    }
-    setVerbList([...getVerbList(verbType)]);
-    switch (verbType) {
+    const verbTypeLS = localStorage.getItem("verbType") as VerbType;
+    const verbFormLS = localStorage.getItem("verbForm") as VerbFormType;
+    const verbListAux = [...getVerbList(verbTypeLS)];
+    setVerbList(verbListAux);
+    setVerbType(verbTypeLS);
+    setVerbForm(verbFormLS);
+    switch (verbTypeLS) {
       case "Godan":
-        setFormatMethod((_) => GodanFormatter.getFormatter);
+        formatMethod.current = GodanFormatter.getFormatter(verbFormLS);
         break;
       case "Ichidan":
-        setFormatMethod((_) => IchidanFormatter.getFormatter);
+        formatMethod.current = IchidanFormatter.getFormatter(verbFormLS);
         break;
       case "Irregular":
-        setFormatMethod((_) => IrregularFormatter.getFormatter);
-        break;
-      default:
+        formatMethod.current = IrregularFormatter.getFormatter(verbFormLS);
         break;
     }
-  }, [verbType, verbForm]);
+    generateNewRandomVerb(verbListAux);
+  }, []);
 
-  useEffect(() => {
-    if (!verbList.length) {
-      return;
-    }
-    generateNewRandomVerb();
-  });
-
-  const randomNumber = (toNumber: number) => {
-    return Math.floor(Math.random() * toNumber);
-  };
-
-  const generateNewRandomVerb = () => {
-    const index = randomNumber(verbList.length);
+  const generateNewRandomVerb = (verbList: Verb[] = []) => {
+    const index = Math.floor(Math.random() * verbList.length);
     const newVerb: Verb = { ...verbList[index] };
     newVerb.answers = [
-      formatMethod(newVerb.reading),
-      formatMethod(newVerb.kanji),
+      formatMethod.current(newVerb.reading),
+      formatMethod.current(newVerb.kanji),
     ];
     verbList.splice(index, 1);
     setActualVerb(newVerb);
@@ -69,17 +59,17 @@ export default function PlayPage() {
     { response }: { response: string },
     event: FormEvent<HTMLFormElement> | undefined
   ) => {
-    setAnswered([...answered, { ...actualVerb, answered: response }]);
+    answered.current = [
+      ...answered.current,
+      { ...actualVerb, answered: response },
+    ];
     event?.currentTarget.reset();
     if (!verbList.length) {
-      return finish();
+      localStorage.setItem("lastResults", JSON.stringify(answered.current));
+      router.replace("/last-results");
+      return;
     }
-    generateNewRandomVerb();
-  };
-
-  const finish = () => {
-    localStorage.setItem("lastResults", JSON.stringify(answered));
-    router.replace("/last-results");
+    generateNewRandomVerb(verbList);
   };
 
   return (
@@ -92,7 +82,8 @@ export default function PlayPage() {
           {actualVerb?.reading}) -{actualVerb?.meaning}
         </p>
         <p>
-          {verbList.length + 1} verb{verbList.length > 1 ? "s" : ""} remaining
+          {verbList.length + 1} {verbType} verb{verbList.length > 1 ? "s" : ""}{" "}
+          remaining
         </p>
         <br />
         <Form onSubmit={onSubmit}>

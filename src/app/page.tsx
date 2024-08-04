@@ -6,7 +6,7 @@ import Form from "@/components/form";
 import Select from "@/components/select";
 import { useRouter } from "next/navigation";
 
-export type VerbType = "Godan" | "Ichidan" | "Irregular";
+export type VerbType = "Godan" | "Ichidan" | "Irregular" | "All";
 export type VerbFormType =
   | "Polite"
   | "Negative"
@@ -16,7 +16,7 @@ export type VerbFormType =
   | "Te";
 
 export default function Home() {
-  const verbTypes: VerbType[] = ["Godan", "Ichidan", "Irregular"];
+  const verbTypes: VerbType[] = ["Godan", "Ichidan", "Irregular", "All"];
   const verbForms: VerbFormType[] = [
     "Polite",
     "Negative",

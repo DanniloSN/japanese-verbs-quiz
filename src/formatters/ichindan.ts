@@ -17,14 +17,26 @@ export const getFormatter = (formatMethod: VerbFormType) => {
   }
 };
 
-const formatPolite = (verb: string) => {};
+const formatPolite = (verb: string) => {
+  return verb;
+};
 
-const formatNegative = (verb: string) => {};
+const formatNegative = (verb: string) => {
+  return verb;
+};
 
-const formatNegativePolite = (verb: string) => {};
+const formatNegativePolite = (verb: string) => {
+  return verb;
+};
 
-const formatImperative = (verb: string) => {};
+const formatImperative = (verb: string) => {
+  return verb;
+};
 
-const formatConditional = (verb: string) => {};
+const formatConditional = (verb: string) => {
+  return verb;
+};
 
-const formatTe = (verb: string) => {};
+const formatTe = (verb: string) => {
+  return verb;
+};

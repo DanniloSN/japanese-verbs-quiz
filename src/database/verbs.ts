@@ -6,16 +6,32 @@ export interface Verb {
   meaning: string;
   answers?: string[];
   answered?: string;
+  type?: VerbType;
+  formatter?: (verb: string) => string;
 }
 
 export const getVerbList = (verbType: VerbType) => {
+  const godanAux = [...godanVerbs].map((verb) => ({
+    ...verb,
+    type: "Godan" as VerbType,
+  }));
+  const ichidanAux = [...ichidanVerbs].map((verb) => ({
+    ...verb,
+    type: "Ichidan" as VerbType,
+  }));
+  const irregularAux = [...irregularVerbs].map((verb) => ({
+    ...verb,
+    type: "Irregular" as VerbType,
+  }));
   switch (verbType) {
     case "Godan":
-      return godanVerbs;
+      return godanAux;
     case "Ichidan":
-      return ichidanVerbs;
+      return ichidanAux;
     case "Irregular":
-      return irregularVerbs;
+      return irregularAux;
+    case "All":
+      return [...godanAux, ...ichidanAux, ...irregularAux];
     default:
       return [];
   }
